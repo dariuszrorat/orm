@@ -59,6 +59,11 @@ Get all employees:
         $results = Entity_Manager::factory('Employee')
             ->find_all();
 
+        // use 1 hrs lifetime cache
+        $results = Entity_Manager::factory('Employee')
+            ->cached(3600)
+            ->find_all();
+
 ```
 
 Get filtered data:
