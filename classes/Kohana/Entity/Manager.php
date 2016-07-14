@@ -70,6 +70,12 @@ class Kohana_Entity_Manager
         return $this;
     }
 
+    public function transactional()
+    {
+        $this->_transactional = TRUE;
+        return $this;
+    }
+
     /**
      * Commit changes
      *
@@ -88,11 +94,30 @@ class Kohana_Entity_Manager
 
     protected function _apply_changes()
     {
-        foreach ($this->_persisters as $object)
+        try
         {
-            $this->_unit_of_work($object);
+            if ($this->_transactional)
+            {
+                Database::instance()->begin();
+            }
+            foreach ($this->_persisters as $object)
+            {
+                $this->_unit_of_work($object);
+            }
+            if ($this->_transactional)
+            {
+                Database::instance()->commit();
+            }
+            return TRUE;
         }
-        return TRUE;
+        catch (Exception $ex)
+        {
+            if ($this->_transactional)
+            {
+                Database::instance()->rollback();
+            }
+            throw $ex;
+        }
     }
 
     protected function _unit_of_work($object)
