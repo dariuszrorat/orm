@@ -39,7 +39,7 @@ Alternate:
         $entity = Entity::factory('Employee')
             ->set('firstname', 'John')
             ->set('lastname', 'Doe')
-            ->set('age', 30);
+            ->set('age', 40);
 
         Entity_Manager::factory()
             ->persist($entity)
