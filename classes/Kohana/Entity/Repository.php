@@ -8,6 +8,7 @@ class Kohana_Entity_Repository
     protected $_name;
     protected $_table_name;
     protected $_db_pending = array();
+    protected $_cache_life = 0;
 
     public function __construct($name)
     {
@@ -24,6 +25,17 @@ class Kohana_Entity_Repository
     public function find_all()
     {
         return $this->_load_result(TRUE);
+    }
+
+    public function cached($lifetime = NULL)
+    {
+        if ($lifetime === NULL)
+        {
+            $lifetime = Kohana::$cache_life;
+        }
+
+        $this->_cache_life = $lifetime;
+        return $this;
     }
 
     /**
@@ -226,6 +238,8 @@ class Kohana_Entity_Repository
             $builder = DB::select('*')
                     ->from($this->_table_name);
             $this->_compile_where($builder);
+            if ($this->_cache_life > 0)
+                $builder->cached($this->_cache_life);
             $results = $builder
                     ->as_object('Entity_' . $this->_name)
                     ->execute()
@@ -237,7 +251,9 @@ class Kohana_Entity_Repository
             $builder = DB::select('*')
                     ->from($this->_table_name);
             $this->_compile_where($builder);
-            $result = $builder            
+            if ($this->_cache_life > 0)
+                $builder->cached($this->_cache_life);
+            $result = $builder
                     ->as_object('Entity_' . $this->_name)
                     ->execute()
                     ->current();
