@@ -12,6 +12,7 @@ defined('SYSPATH') OR die('No direct script access.');
 abstract class Kohana_Entity
 {
 
+    const NOT_EXISTS_STATE = 00;
     const CREATE_STATE = 10;
     const READ_STATE = 20;
     const UPDATE_STATE = 30;
@@ -66,6 +67,11 @@ abstract class Kohana_Entity
     public function __isset($key)
     {
         return isset($this->_data[$key]);
+    }
+
+    public function __toString()
+    {
+        return get_class($this);
     }
 
     public function set($key, $value)

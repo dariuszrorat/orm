@@ -122,6 +122,10 @@ class Kohana_Entity_Manager
 
     protected function _unit_of_work($object)
     {
+        if ($object->state() === Entity::NOT_EXISTS_STATE)
+        {
+            throw new Entity_Exception('Entity not exists: :var', array(':var' => $object));
+        }
         $table = $object->get_table_name();
         $state = $object->state();
         $result = FALSE;
@@ -155,7 +159,7 @@ class Kohana_Entity_Manager
                     $result = DB::delete($table)
                             ->where('id', '=', $id)
                             ->execute();
-                    unset($object);
+                    $object->state(Entity::NOT_EXISTS_STATE);
                 }
                 break;
             default: break;
