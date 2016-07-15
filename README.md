@@ -133,7 +133,7 @@ Delete all records:
 
         foreach ($entities as $entity)
         {
-            $entity->state(Entity::DELETE_STATE));
+            $entity->state(Entity::DELETE_STATE);
         }
 
         Entity_Manager::factory();
