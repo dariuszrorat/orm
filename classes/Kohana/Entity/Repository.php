@@ -26,6 +26,17 @@ class Kohana_Entity_Repository
         return $this->_load_result(TRUE);
     }
 
+    public function count_all()
+    {
+         $builder = DB::select(array(DB::expr('COUNT(id)'), 'records_found'))
+             ->from($this->_table_name);
+         $this->_compile_where($builder);
+         $records_found = $builder->execute()
+             ->get('records_found');
+
+         return (int) $records_found;
+    }
+
     /**
      * Enables the query to be cached for a specified amount of time.
      *
