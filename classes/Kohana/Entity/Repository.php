@@ -256,43 +256,6 @@ class Kohana_Entity_Repository
     }
 
     /**
-     * Adds addition tables to "JOIN ...".
-     *
-     * @param   mixed   $table  column name or array($column, $alias) or object
-     * @param   string  $type   join type (LEFT, RIGHT, INNER, etc)
-     * @return  $this
-     */
-    public function join($table, $type = NULL)
-    {
-        // Add pending database call which is executed after query type is determined
-        $this->_db_pending[] = array(
-            'name' => 'join',
-            'args' => array($table, $type),
-        );
-
-        return $this;
-    }
-
-    /**
-     * Adds "ON ..." conditions for the last created JOIN statement.
-     *
-     * @param   mixed   $c1  column name or array($column, $alias) or object
-     * @param   string  $op  logic operator
-     * @param   mixed   $c2  column name or array($column, $alias) or object
-     * @return  $this
-     */
-    public function on($c1, $op, $c2)
-    {
-        // Add pending database call which is executed after query type is determined
-        $this->_db_pending[] = array(
-            'name' => 'on',
-            'args' => array($c1, $op, $c2),
-        );
-
-        return $this;
-    }
-
-    /**
      * Creates a "GROUP BY ..." filter.
      *
      * @param   mixed   $columns  column name or array($column, $alias) or object
