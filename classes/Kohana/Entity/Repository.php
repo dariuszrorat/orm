@@ -8,7 +8,6 @@ class Kohana_Entity_Repository
     protected $_name;
     protected $_table_name;
     protected $_db_pending = array();
-    protected $_table_columns = '*';
 
     public function __construct($name)
     {
@@ -432,7 +431,7 @@ class Kohana_Entity_Repository
     {
         if ($multiple === TRUE)
         {
-            $builder = DB::select($this->_table_columns)
+            $builder = DB::select()
                     ->from($this->_table_name);
             $this->_compile_where($builder);
             $results = $builder
@@ -443,7 +442,7 @@ class Kohana_Entity_Repository
             return $results;
         } else
         {
-            $builder = DB::select($this->_table_columns)
+            $builder = DB::select()
                     ->from($this->_table_name);
             $this->_compile_where($builder);
             $result = $builder
