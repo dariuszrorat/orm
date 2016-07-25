@@ -20,7 +20,6 @@ class Kohana_Entity_Manager
 
     public function __construct()
     {
-        //none
     }
 
     /**
@@ -43,14 +42,18 @@ class Kohana_Entity_Manager
      * @return  this
      */
 
-    public function persist($object)
+    public function persist($objects = NULL)
     {
-        if (is_array($object))
+        $objects = func_get_args();
+        foreach ($objects as $object)
         {
-            $this->_persisters = array_merge($this->_persisters, $object);
-        } else
-        {
-            $this->_persisters[] = $object;
+            if (is_array($object))
+            {
+                $this->_persisters = array_merge($this->_persisters, $object);
+            } else
+            {
+                $this->_persisters[] = $object;
+            }
         }
         return $this;
     }
@@ -62,10 +65,14 @@ class Kohana_Entity_Manager
      * @return  this
      */
 
-    public function remove($object)
+    public function remove($objects = NULL)
     {
-        $object->state(Entity::DELETED_STATE);
-        $this->_persisters[] = $object;
+        $objects = func_get_args();
+        foreach ($objects as $object)
+        {
+            $object->state(Entity::DELETED_STATE);
+            $this->_persisters[] = $object;
+        }
         
         return $this;
     }
