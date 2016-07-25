@@ -215,6 +215,23 @@ class Kohana_Entity_Repository
     }
 
     /**
+     * Return up to "OFFSET ..." results
+     *
+     * @param   integer  $number  offset value
+     * @return  $this
+     */
+    public function offset($value)
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'offset',
+            'args' => array($value),
+        );
+
+        return $this;
+    }
+
+    /**
      * Enables or disables selecting only unique columns using "SELECT DISTINCT"
      *
      * @param   boolean  $value  enable or disable distinct columns
