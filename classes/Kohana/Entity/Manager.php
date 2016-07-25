@@ -5,21 +5,35 @@ defined('SYSPATH') OR die('No direct script access.');
 class Kohana_Entity_Manager
 {
 
-    protected $_repository;
+    /**
+     * Stores transaction mode information for ORM models
+     * @var bool
+     */
     protected $_transactional = FALSE;
+
+    /**
+     * Stores persisters information for ORM models
+     * @var array
+     */
     protected $_persisters = array();
 
-    public static function factory($name = NULL)
+    /**
+     * Creates and returns a new entity manager or repository. 
+     * @param   string  $repository  Repository name
+     * @return  Entity_Repository or Entity_Manager
+     */
+    public static function factory($repository = NULL)
     {
-        if ($name !== NULL)
+        if ($repository !== NULL)
         {
-            return new Entity_Repository($name);
+            return new Entity_Repository($repository);
         }
         return new Entity_Manager();
     }
 
     public function __construct()
     {
+        
     }
 
     /**
@@ -28,11 +42,10 @@ class Kohana_Entity_Manager
      * @param   string  $name   repository name
      * @return  Entity_Repository
      */
-
     public function get_repository($name)
     {
-        $this->_repository = new Entity_Repository($name);
-        return $this->_repository;
+        $repository = new Entity_Repository($name);
+        return $repository;
     }
 
     /**
@@ -41,7 +54,6 @@ class Kohana_Entity_Manager
      * @param   entity object or array of objects
      * @return  this
      */
-
     public function persist($objects = NULL)
     {
         $objects = func_get_args();
@@ -61,10 +73,9 @@ class Kohana_Entity_Manager
     /**
      * Set object state to remove
      *
-     * @param   entity object
+     * @param   entity object(s)
      * @return  this
      */
-
     public function remove($objects = NULL)
     {
         $objects = func_get_args();
@@ -73,10 +84,15 @@ class Kohana_Entity_Manager
             $object->state(Entity::DELETED_STATE);
             $this->_persisters[] = $object;
         }
-        
+
         return $this;
     }
 
+    /*
+     * Set transaction mode
+     * 
+     * @return this
+     */
     public function transactional()
     {
         $this->_transactional = TRUE;
@@ -88,17 +104,26 @@ class Kohana_Entity_Manager
      *
      * @return bool
      */
-
     public function flush()
     {
         return $this->_apply_changes();
     }
-    
+
+    /*
+     * Get current persisters
+     * 
+     * @return array
+     */
     public function persisters()
     {
         return $this->_persisters;
     }
 
+    /*
+     * Apply all changes
+     * 
+     * @return bool
+     */
     protected function _apply_changes()
     {
         try
@@ -116,8 +141,7 @@ class Kohana_Entity_Manager
                 Database::instance()->commit();
             }
             return TRUE;
-        }
-        catch (Exception $ex)
+        } catch (Exception $ex)
         {
             if ($this->_transactional)
             {
@@ -127,13 +151,18 @@ class Kohana_Entity_Manager
         }
     }
 
+    /*
+     * Unit of work method. Works on one persister.
+     * 
+     * @return mixed
+     */
     protected function _unit_of_work($object)
     {
         if ($object->state() === Entity::NOT_EXISTS_STATE)
         {
             throw new Entity_Exception('Entity not exists: :var', array(':var' => $object));
         }
-        $table = $object->get_table_name();
+        $table = $object->table_name();
         $state = $object->state();
         $result = FALSE;
 

@@ -11,13 +11,18 @@ defined('SYSPATH') OR die('No direct script access.');
  */
 abstract class Kohana_Entity
 {
-
+    /*
+     * Entity state definitions
+     */
     const NOT_EXISTS_STATE = 00;
     const CREATED_STATE = 10;
     const LOADED_STATE = 20;
     const UPDATED_STATE = 30;
     const DELETED_STATE = 40;
 
+    /*
+     * Store informations about table name
+     */
     protected $_table_name;
     protected $_data = array();
     protected $_state = Entity::NOT_EXISTS_STATE;
@@ -43,7 +48,12 @@ abstract class Kohana_Entity
 
     }
 
-    public function get_table_name()
+    /*
+     * Get table name
+     * 
+     * @return string
+     */
+    public function table_name()
     {
         return $this->_table_name;
     }

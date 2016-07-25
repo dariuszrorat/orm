@@ -1,4 +1,4 @@
-# Kohana - ORM module
+# Kohana ORM module
 
 This module using Data Mapper pattern to work with CRUD operations.
 

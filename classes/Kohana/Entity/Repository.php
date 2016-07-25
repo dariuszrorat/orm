@@ -4,37 +4,61 @@ defined('SYSPATH') OR die('No direct script access.');
 
 class Kohana_Entity_Repository
 {
+    /*
+     * Store informations about repository name     
+     */
 
     protected $_name;
+    /*
+     * Store informations about table name     
+     */
     protected $_table_name;
+    /*
+     * DB pending conditions     
+     */
     protected $_db_pending = array();
 
     public function __construct($name)
     {
         $this->_name = $name;
         $entity = Entity::factory($this->_name);
-        $this->_table_name = $entity->get_table_name();
+        $this->_table_name = $entity->table_name();
     }
 
+    /*
+     * Find one result
+     * 
+     * @return Entity
+     */
     public function find()
     {
         return $this->_load_result(FALSE);
     }
 
+    /*
+     * Find all results
+     * 
+     * @return array of Entity
+     */
     public function find_all()
     {
         return $this->_load_result(TRUE);
     }
 
+    /*
+     * Count all results
+     * 
+     * @return int
+     */
     public function count_all()
     {
-         $builder = DB::select(array(DB::expr('COUNT(id)'), 'records_found'))
-             ->from($this->_table_name);
-         $this->_compile_where($builder);
-         $records_found = $builder->execute()
-             ->get('records_found');
+        $builder = DB::select(array(DB::expr('COUNT(id)'), 'records_found'))
+                ->from($this->_table_name);
+        $this->_compile_where($builder);
+        $records_found = $builder->execute()
+                ->get('records_found');
 
-         return (int) $records_found;
+        return (int) $records_found;
     }
 
     /**
@@ -438,6 +462,12 @@ class Kohana_Entity_Repository
         return $this;
     }
 
+    /*
+     * Load single or multiple result
+     * 
+     * @param bool
+     * @return mixed
+     */
     protected function _load_result($multiple = FALSE)
     {
         if ($multiple === TRUE)
@@ -470,16 +500,18 @@ class Kohana_Entity_Repository
         }
     }
 
+    /*
+     * Compile where conditions
+     * 
+     * @param Database Query Builder SELECT
+     * @return void
+     */
     protected function _compile_where($builder)
     {
-        // Process pending database method calls
         foreach ($this->_db_pending as $method)
         {
             $name = $method['name'];
             $args = $method['args'];
-
-            //$this->_db_applied[$name] = $name;
-
             call_user_func_array(array($builder, $name), $args);
         }
 
