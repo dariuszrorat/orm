@@ -258,6 +258,12 @@ class Kohana_Entity_Repository
                     ->execute()
                     ->current();
 
+            if (!$result)
+            {
+                $result = Entity::factory($this->_name)
+                    ->state(Entity::NOT_EXISTS_STATE);
+                return $result;
+            }
             return $result;
         }
     }
