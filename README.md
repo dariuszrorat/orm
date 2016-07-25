@@ -87,8 +87,8 @@ Update one record:
 
         $entity->price = 5000;
 
-        Entity_Manager::factory();
-            ->persist($entity);
+        Entity_Manager::factory()
+            ->persist($entity)
             ->flush();
 
 ```
@@ -104,8 +104,8 @@ Update many records:
             $entity->price = $entity->price + 100;
         }
 
-        Entity_Manager::factory();
-            ->persist($entities);
+        Entity_Manager::factory()
+            ->persist($entities)
             ->flush();
 
 ```
@@ -119,8 +119,8 @@ Delete one record:
             ->where('id', '=', 50)
             ->find();
 
-        Entity_Manager::factory();
-            ->remove($entity);
+        Entity_Manager::factory()
+            ->remove($entity)
             ->flush();
 
 ```
@@ -136,8 +136,8 @@ Delete all records:
             $entity->state(Entity::DELETED_STATE);
         }
 
-        Entity_Manager::factory();
-            ->persist($entities);
+        Entity_Manager::factory()
+            ->persist($entities)
             ->flush();
 
 ```
