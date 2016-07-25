@@ -428,23 +428,6 @@ class Kohana_Entity_Repository
         return $this;
     }
 
-    /**
-     * Adds "USING ..." conditions for the last created JOIN statement.
-     *
-     * @param   string  $columns  column name
-     * @return  $this
-     */
-    public function using($columns)
-    {
-        // Add pending database call which is executed after query type is determined
-        $this->_db_pending[] = array(
-            'name' => 'using',
-            'args' => array($columns),
-        );
-
-        return $this;
-    }
-
     protected function _load_result($multiple = FALSE)
     {
         if ($multiple === TRUE)
