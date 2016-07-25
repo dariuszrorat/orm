@@ -13,14 +13,14 @@ abstract class Kohana_Entity
 {
 
     const NOT_EXISTS_STATE = 00;
-    const CREATE_STATE = 10;
-    const READ_STATE = 20;
-    const UPDATE_STATE = 30;
-    const DELETE_STATE = 40;
+    const CREATED_STATE = 10;
+    const LOADED_STATE = 20;
+    const UPDATED_STATE = 30;
+    const DELETED_STATE = 40;
 
     protected $_table_name;
     protected $_data = array();
-    protected $_state = Entity::CREATE_STATE;
+    protected $_state = Entity::NOT_EXISTS_STATE;
 
     /**
      * Create a new entity instance.
@@ -40,7 +40,7 @@ abstract class Kohana_Entity
 
     public function __construct()
     {
-        $this->_state = array_key_exists('id', $this->_data) ? Entity::READ_STATE : Entity::CREATE_STATE;
+
     }
 
     public function get_table_name()
@@ -77,7 +77,7 @@ abstract class Kohana_Entity
     public function set($key, $value)
     {
         $this->_data[$key] = $value;
-        $this->_state = array_key_exists('id', $this->_data) ? Entity::UPDATE_STATE : Entity::CREATE_STATE;
+        $this->_state = array_key_exists('id', $this->_data) ? Entity::UPDATED_STATE : Entity::CREATED_STATE;
         return $this;
     }
 

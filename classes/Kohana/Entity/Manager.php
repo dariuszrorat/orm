@@ -64,7 +64,7 @@ class Kohana_Entity_Manager
 
     public function remove($object)
     {
-        $object->state(Entity::DELETE_STATE);
+        $object->state(Entity::DELETED_STATE);
         $this->_persisters[] = $object;
         
         return $this;
@@ -132,17 +132,17 @@ class Kohana_Entity_Manager
 
         switch ($state)
         {
-            case Entity::CREATE_STATE:
+            case Entity::CREATED_STATE:
                 {
                     $vars = $object->data();
                     $result = DB::insert($table, array_keys($vars))
                             ->values($vars)
                             ->execute();
                     $object->id = $result[0];
-                    $object->state(Entity::READ_STATE);
+                    $object->state(Entity::LOADED_STATE);
                 }
                 break;
-            case Entity::UPDATE_STATE:
+            case Entity::UPDATED_STATE:
                 {
                     $id = $object->id;
                     $vars = $object->data();
@@ -150,10 +150,10 @@ class Kohana_Entity_Manager
                             ->set($vars)
                             ->where('id', '=', $id)
                             ->execute();
-                    $object->state(Entity::READ_STATE);
+                    $object->state(Entity::LOADED_STATE);
                 }
                 break;
-            case Entity::DELETE_STATE:
+            case Entity::DELETED_STATE:
                 {
                     $id = $object->id;
                     $result = DB::delete($table)

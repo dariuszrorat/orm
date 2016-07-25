@@ -8,7 +8,7 @@ class Kohana_Entity_Repository
     protected $_name;
     protected $_table_name;
     protected $_db_pending = array();
-    protected $_cache_life = 0;
+    protected $_table_columns = '*';
 
     public function __construct($name)
     {
@@ -27,14 +27,21 @@ class Kohana_Entity_Repository
         return $this->_load_result(TRUE);
     }
 
+    /**
+     * Enables the query to be cached for a specified amount of time.
+     *
+     * @param   integer  $lifetime  number of seconds to cache
+     * @return  $this
+     * @uses    Kohana::$cache_life
+     */
     public function cached($lifetime = NULL)
     {
-        if ($lifetime === NULL)
-        {
-            $lifetime = Kohana::$cache_life;
-        }
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'cached',
+            'args' => array($lifetime),
+        );
 
-        $this->_cache_life = $lifetime;
         return $this;
     }
 
@@ -220,12 +227,12 @@ class Kohana_Entity_Repository
      * @param   integer  $number  offset value
      * @return  $this
      */
-    public function offset($value)
+    public function offset($number)
     {
         // Add pending database call which is executed after query type is determined
         $this->_db_pending[] = array(
             'name' => 'offset',
-            'args' => array($value),
+            'args' => array($number),
         );
 
         return $this;
@@ -248,15 +255,240 @@ class Kohana_Entity_Repository
         return $this;
     }
 
+    /**
+     * Adds addition tables to "JOIN ...".
+     *
+     * @param   mixed   $table  column name or array($column, $alias) or object
+     * @param   string  $type   join type (LEFT, RIGHT, INNER, etc)
+     * @return  $this
+     */
+    public function join($table, $type = NULL)
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'join',
+            'args' => array($table, $type),
+        );
+
+        return $this;
+    }
+
+    /**
+     * Adds "ON ..." conditions for the last created JOIN statement.
+     *
+     * @param   mixed   $c1  column name or array($column, $alias) or object
+     * @param   string  $op  logic operator
+     * @param   mixed   $c2  column name or array($column, $alias) or object
+     * @return  $this
+     */
+    public function on($c1, $op, $c2)
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'on',
+            'args' => array($c1, $op, $c2),
+        );
+
+        return $this;
+    }
+
+    /**
+     * Creates a "GROUP BY ..." filter.
+     *
+     * @param   mixed   $columns  column name or array($column, $alias) or object
+     * @param   ...
+     * @return  $this
+     */
+    public function group_by($columns)
+    {
+        $columns = func_get_args();
+
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'group_by',
+            'args' => $columns,
+        );
+
+        return $this;
+    }
+
+    /**
+     * Alias of and_having()
+     *
+     * @param   mixed   $column  column name or array($column, $alias) or object
+     * @param   string  $op      logic operator
+     * @param   mixed   $value   column value
+     * @return  $this
+     */
+    public function having($column, $op, $value = NULL)
+    {
+        return $this->and_having($column, $op, $value);
+    }
+
+    /**
+     * Creates a new "AND HAVING" condition for the query.
+     *
+     * @param   mixed   $column  column name or array($column, $alias) or object
+     * @param   string  $op      logic operator
+     * @param   mixed   $value   column value
+     * @return  $this
+     */
+    public function and_having($column, $op, $value = NULL)
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'and_having',
+            'args' => array($column, $op, $value),
+        );
+
+        return $this;
+    }
+
+    /**
+     * Creates a new "OR HAVING" condition for the query.
+     *
+     * @param   mixed   $column  column name or array($column, $alias) or object
+     * @param   string  $op      logic operator
+     * @param   mixed   $value   column value
+     * @return  $this
+     */
+    public function or_having($column, $op, $value = NULL)
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'or_having',
+            'args' => array($column, $op, $value),
+        );
+
+        return $this;
+    }
+
+    /**
+     * Alias of and_having_open()
+     *
+     * @return  $this
+     */
+    public function having_open()
+    {
+        return $this->and_having_open();
+    }
+
+    /**
+     * Opens a new "AND HAVING (...)" grouping.
+     *
+     * @return  $this
+     */
+    public function and_having_open()
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'and_having_open',
+            'args' => array(),
+        );
+
+        return $this;
+    }
+
+    /**
+     * Opens a new "OR HAVING (...)" grouping.
+     *
+     * @return  $this
+     */
+    public function or_having_open()
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'or_having_open',
+            'args' => array(),
+        );
+
+        return $this;
+    }
+
+    /**
+     * Closes an open "AND HAVING (...)" grouping.
+     *
+     * @return  $this
+     */
+    public function having_close()
+    {
+        return $this->and_having_close();
+    }
+
+    /**
+     * Closes an open "AND HAVING (...)" grouping.
+     *
+     * @return  $this
+     */
+    public function and_having_close()
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'and_having_close',
+            'args' => array(),
+        );
+
+        return $this;
+    }
+
+    /**
+     * Closes an open "OR HAVING (...)" grouping.
+     *
+     * @return  $this
+     */
+    public function or_having_close()
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'or_having_close',
+            'args' => array(),
+        );
+
+        return $this;
+    }
+
+    /**
+     * Set the value of a parameter in the query.
+     *
+     * @param   string   $param  parameter key to replace
+     * @param   mixed    $value  value to use
+     * @return  $this
+     */
+    public function param($param, $value)
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'param',
+            'args' => array($param, $value),
+        );
+
+        return $this;
+    }
+
+    /**
+     * Adds "USING ..." conditions for the last created JOIN statement.
+     *
+     * @param   string  $columns  column name
+     * @return  $this
+     */
+    public function using($columns)
+    {
+        // Add pending database call which is executed after query type is determined
+        $this->_db_pending[] = array(
+            'name' => 'using',
+            'args' => array($columns),
+        );
+
+        return $this;
+    }
+
     protected function _load_result($multiple = FALSE)
     {
         if ($multiple === TRUE)
         {
-            $builder = DB::select('*')
+            $builder = DB::select($this->_table_columns)
                     ->from($this->_table_name);
             $this->_compile_where($builder);
-            if ($this->_cache_life > 0)
-                $builder->cached($this->_cache_life);
             $results = $builder
                     ->as_object('Entity_' . $this->_name)
                     ->execute()
@@ -265,11 +497,9 @@ class Kohana_Entity_Repository
             return $results;
         } else
         {
-            $builder = DB::select('*')
+            $builder = DB::select($this->_table_columns)
                     ->from($this->_table_name);
             $this->_compile_where($builder);
-            if ($this->_cache_life > 0)
-                $builder->cached($this->_cache_life);
             $result = $builder
                     ->as_object('Entity_' . $this->_name)
                     ->execute()
@@ -277,8 +507,7 @@ class Kohana_Entity_Repository
 
             if (!$result)
             {
-                $result = Entity::factory($this->_name)
-                    ->state(Entity::NOT_EXISTS_STATE);
+                $result = Entity::factory($this->_name);
                 return $result;
             }
             return $result;
