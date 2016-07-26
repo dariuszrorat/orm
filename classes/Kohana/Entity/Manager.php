@@ -1,6 +1,12 @@
 <?php
 
 defined('SYSPATH') OR die('No direct script access.');
+/**
+ * Kohana Entity Manager
+ *
+ * @package    Kohana/ORM
+ * @author     Dariusz Rorat
+ */
 
 class Kohana_Entity_Manager
 {
@@ -88,7 +94,7 @@ class Kohana_Entity_Manager
         return $this;
     }
 
-    /*
+    /**
      * Set transaction mode
      * 
      * @return this
@@ -109,7 +115,7 @@ class Kohana_Entity_Manager
         return $this->_apply_changes();
     }
 
-    /*
+    /**
      * Get current persisters
      * 
      * @return array
@@ -119,7 +125,7 @@ class Kohana_Entity_Manager
         return $this->_persisters;
     }
 
-    /*
+    /**
      * Apply all changes
      * 
      * @return bool
@@ -151,7 +157,7 @@ class Kohana_Entity_Manager
         }
     }
 
-    /*
+    /**
      * Unit of work method. Works on one persister.
      * 
      * @return mixed

@@ -1,19 +1,25 @@
 <?php
 
 defined('SYSPATH') OR die('No direct script access.');
+/**
+ * Kohana Entity Repository
+ *
+ * @package    Kohana/ORM
+ * @author     Dariusz Rorat
+ */
 
 class Kohana_Entity_Repository
 {
-    /*
+    /**
      * Store informations about repository name     
      */
 
     protected $_name;
-    /*
+    /**
      * Store informations about table name     
      */
     protected $_table_name;
-    /*
+    /**
      * DB pending conditions     
      */
     protected $_db_pending = array();
@@ -25,7 +31,7 @@ class Kohana_Entity_Repository
         $this->_table_name = $entity->table_name();
     }
 
-    /*
+    /**
      * Find one result
      * 
      * @return Entity
@@ -35,7 +41,7 @@ class Kohana_Entity_Repository
         return $this->_load_result(FALSE);
     }
 
-    /*
+    /**
      * Find all results
      * 
      * @return array of Entity
@@ -45,7 +51,7 @@ class Kohana_Entity_Repository
         return $this->_load_result(TRUE);
     }
 
-    /*
+    /**
      * Count all results
      * 
      * @return int
@@ -462,7 +468,7 @@ class Kohana_Entity_Repository
         return $this;
     }
 
-    /*
+    /**
      * Load single or multiple result
      * 
      * @param bool
@@ -500,7 +506,7 @@ class Kohana_Entity_Repository
         }
     }
 
-    /*
+    /**
      * Compile where conditions
      * 
      * @param Database Query Builder SELECT

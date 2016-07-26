@@ -11,7 +11,7 @@ defined('SYSPATH') OR die('No direct script access.');
  */
 abstract class Kohana_Entity
 {
-    /*
+    /**
      * Entity state definitions
      */
     const NOT_EXISTS_STATE = 00;
@@ -20,7 +20,7 @@ abstract class Kohana_Entity
     const UPDATED_STATE = 30;
     const DELETED_STATE = 40;
 
-    /*
+    /**
      * Store informations about table name
      */
     protected $_table_name;
@@ -48,7 +48,7 @@ abstract class Kohana_Entity
 
     }
 
-    /*
+    /**
      * Get table name
      * 
      * @return string
