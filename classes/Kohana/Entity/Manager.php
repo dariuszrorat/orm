@@ -1,13 +1,13 @@
 <?php
 
 defined('SYSPATH') OR die('No direct script access.');
+
 /**
  * Kohana Entity Manager
  *
  * @package    Kohana/ORM
  * @author     Dariusz Rorat
  */
-
 class Kohana_Entity_Manager
 {
 
@@ -176,6 +176,7 @@ class Kohana_Entity_Manager
         {
             case Entity::CREATED_STATE:
                 {
+                    $this->check($object);
                     $vars = $object->data();
                     $result = DB::insert($table, array_keys($vars))
                             ->values($vars)
@@ -186,6 +187,7 @@ class Kohana_Entity_Manager
                 break;
             case Entity::UPDATED_STATE:
                 {
+                    $this->check($object);
                     $id = $object->id;
                     $vars = $object->data();
                     $result = DB::update($table)
@@ -207,6 +209,37 @@ class Kohana_Entity_Manager
             default: break;
         }
         return $result;
+    }
+
+    protected function _validation($object)
+    {
+        // Build the validation object with its rules
+        $validation = Validation::factory($object->data());
+
+        foreach ($object->rules() as $field => $rules)
+        {
+            $validation->rules($field, $rules);
+        }
+        return $validation;
+    }
+
+    public function check($object)
+    {
+        $data = $object->data();
+        if (empty($data))
+        {
+            return $this;
+        }
+        $array = $this->_validation($object);
+
+        if (($valid = $array->check()) === FALSE)
+        {
+            $object_name = strtolower(substr(get_class($object), 7));
+            $exception = new Entity_Validation_Exception($object_name, $array);
+            throw $exception;
+        }
+
+        return $this;
     }
 
 }

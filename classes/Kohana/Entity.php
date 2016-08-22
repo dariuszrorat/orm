@@ -11,6 +11,7 @@ defined('SYSPATH') OR die('No direct script access.');
  */
 abstract class Kohana_Entity
 {
+
     /**
      * Entity state definitions
      */
@@ -45,7 +46,7 @@ abstract class Kohana_Entity
 
     public function __construct()
     {
-
+        
     }
 
     /**
@@ -111,6 +112,16 @@ abstract class Kohana_Entity
 
         $this->_state = $value;
         return $this;
+    }
+
+    /**
+     * Rule definitions for validation
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return array();
     }
 
 }

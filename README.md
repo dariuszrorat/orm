@@ -15,6 +15,24 @@ class Entity_Employee extends Entity
 {
     protected $_table_name = 'employee';
 
+    public function rules()
+    {
+        return array(
+            'firstname' => array(
+                array('not_empty'),
+                array('max_length', array(':value', 32)),
+            ),
+            'lastname' => array(
+                array('not_empty'),
+                array('max_length', array(':value', 32)),
+            ),
+            'age' => array(
+                array('not_empty'),
+                array('digit'),
+            ),
+        );
+    }
+
 }
 ```
 
@@ -28,9 +46,17 @@ Basic:
         $entity->lastname = 'Doe';
         $entity->age = 40;
 
-        $em = Entity_Manager::factory();
-        $em->persist($entity);
-        $em->flush();
+        try
+        {
+            $em = Entity_Manager::factory();
+            $em->persist($entity);
+            $em->flush();
+        } catch (Entity_Validation_Exception $ex)
+        {
+            $errors = $ex->errors();
+            // do something
+        }
+
 ```
 
 Alternate:
@@ -41,9 +67,16 @@ Alternate:
             ->set('lastname', 'Doe')
             ->set('age', 40);
 
-        Entity_Manager::factory()
-            ->persist($entity)
-            ->flush();
+        try
+        {
+            Entity_Manager::factory()
+                ->persist($entity)
+                ->flush();
+        } catch (Entity_Validation_Exception $ex)
+        {
+            $errors = $ex->errors();
+            // do something
+        }
 ```
 
 #### Read employees
