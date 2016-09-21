@@ -3,12 +3,12 @@
 defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Kohana Entity Manager
+ * Kohana ORM Entity Manager
  *
  * @package    Kohana/ORM
  * @author     Dariusz Rorat
  */
-class Kohana_Entity_Manager
+class Kohana_ORM_Entity_Manager
 {
 
     /**
@@ -24,34 +24,17 @@ class Kohana_Entity_Manager
     protected $_persisters = array();
 
     /**
-     * Creates and returns a new entity manager or repository. 
-     * @param   string  $repository  Repository name
-     * @return  Entity_Repository or Entity_Manager
+     * Creates and returns a new entity manager.
+     * @return Entity_Manager
      */
-    public static function factory($repository = NULL)
+    public static function factory()
     {
-        if ($repository !== NULL)
-        {
-            return new Entity_Repository($repository);
-        }
-        return new Entity_Manager();
+        return new ORM_Entity_Manager();
     }
 
     public function __construct()
     {
         
-    }
-
-    /**
-     * Get the repository.
-     *
-     * @param   string  $name   repository name
-     * @return  Entity_Repository
-     */
-    public function get_repository($name)
-    {
-        $repository = new Entity_Repository($name);
-        return $repository;
     }
 
     /**

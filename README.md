@@ -48,10 +48,10 @@ Basic:
 
         try
         {
-            $em = Entity_Manager::factory();
+            $em = ORM_Entity_Manager::factory();
             $em->persist($entity);
             $em->flush();
-        } catch (Entity_Validation_Exception $ex)
+        } catch (ORM_Entity_Validation_Exception $ex)
         {
             $errors = $ex->errors();
             // do something
@@ -69,10 +69,10 @@ Alternate:
 
         try
         {
-            Entity_Manager::factory()
+            ORM_Entity_Manager::factory()
                 ->persist($entity)
                 ->flush();
-        } catch (Entity_Validation_Exception $ex)
+        } catch (ORM_Entity_Validation_Exception $ex)
         {
             $errors = $ex->errors();
             // do something
@@ -84,16 +84,11 @@ Alternate:
 Get all employees:
 
 ```php
-        $results = Entity_Manager::factory()
-            ->get_repository('Employee')
-            ->find_all();
-
-        // or
-        $results = Entity_Manager::factory('Employee')
+        $results = ORM_Repository::factory('Employee')
             ->find_all();
 
         // use 1 hrs lifetime cache
-        $results = Entity_Manager::factory('Employee')
+        $results = ORM_Repository::factory('Employee')
             ->cached(3600)
             ->find_all();
 
@@ -102,8 +97,7 @@ Get all employees:
 Get filtered data:
 
 ```php
-        $results = Entity_Manager::factory()
-            ->get_repository('Employee')
+        $results = ORM_Repository::factory('Employee')
             ->where('age', '<', 30)
             ->find_all();
 
@@ -114,13 +108,13 @@ Get filtered data:
 Update one record:
 
 ```php
-        $entity = Entity_Manager::factory('Employee')
+        $entity = ORM_Repository::factory('Employee')
             ->where('id', '=', '1')
             ->find();
 
         $entity->price = 5000;
 
-        Entity_Manager::factory()
+        ORM_Entity_Manager::factory()
             ->persist($entity)
             ->flush();
 
@@ -129,7 +123,7 @@ Update one record:
 Update many records:
 
 ```php
-        $entities = Entity_Manager::factory('Employee')
+        $entities = ORM_Repository::factory('Employee')
             ->find_all();
 
         foreach ($entities as $entity)
@@ -137,7 +131,7 @@ Update many records:
             $entity->price = $entity->price + 100;
         }
 
-        Entity_Manager::factory()
+        ORM_Entity_Manager::factory()
             ->persist($entities)
             ->flush();
 
@@ -148,11 +142,11 @@ Update many records:
 Delete one record:
 
 ```php
-        $entity = Entity_Manager::factory('Employee')
+        $entity = ORM_Repository::factory('Employee')
             ->where('id', '=', 50)
             ->find();
 
-        Entity_Manager::factory()
+        ORM_Entity_Manager::factory()
             ->remove($entity)
             ->flush();
 
@@ -161,7 +155,7 @@ Delete one record:
 Delete all records:
 
 ```php
-        $entities = Entity_Manager::factory('Employee')
+        $entities = ORM_Repository::factory('Employee')
             ->find_all();
 
         foreach ($entities as $entity)
@@ -169,7 +163,7 @@ Delete all records:
             $entity->state(Entity::DELETED_STATE);
         }
 
-        Entity_Manager::factory()
+        ORM_Entity_Manager::factory()
             ->persist($entities)
             ->flush();
 

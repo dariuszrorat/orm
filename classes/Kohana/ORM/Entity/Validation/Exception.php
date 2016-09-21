@@ -3,12 +3,12 @@
 defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Entity Validation exceptions.
+ * ORM Entity Validation exceptions.
  *
  * @package    Kohana/ORM
  * @author     Dariusz Rorat
  */
-class Kohana_Entity_Validation_Exception extends Kohana_Exception
+class Kohana_ORM_Entity_Validation_Exception extends Kohana_Exception
 {
 
     protected $_alias;

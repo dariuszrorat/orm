@@ -2,13 +2,13 @@
 
 defined('SYSPATH') OR die('No direct script access.');
 /**
- * Kohana Entity Repository
+ * Kohana ORM Repository
  *
  * @package    Kohana/ORM
  * @author     Dariusz Rorat
  */
 
-class Kohana_Entity_Repository
+class Kohana_ORM_Repository
 {
     /**
      * Store informations about repository name     
@@ -23,6 +23,16 @@ class Kohana_Entity_Repository
      * DB pending conditions     
      */
     protected $_db_pending = array();
+
+    /**
+     * Creates and returns a new repository.
+     * @return ORM_Repository
+     */
+    public static function factory($name)
+    {
+        return new ORM_Repository($name);
+    }
+
 
     public function __construct($name)
     {

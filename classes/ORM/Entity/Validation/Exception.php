@@ -5,4 +5,4 @@
  * @package    Kohana/ORM
  * @author     Dariusz Rorat
  */
-class Entity_Validation_Exception extends Kohana_Entity_Validation_Exception {}
+class ORM_Entity_Validation_Exception extends Kohana_ORM_Entity_Validation_Exception {}

@@ -1,3 +1,3 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
-class Entity_Repository extends Kohana_Entity_Repository {}
+class ORM_Entity_Manager extends Kohana_ORM_Entity_Manager {}
