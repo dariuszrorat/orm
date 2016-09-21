@@ -218,7 +218,7 @@ class Kohana_ORM_Entity_Manager
         if (($valid = $array->check()) === FALSE)
         {
             $object_name = strtolower(substr(get_class($object), 7));
-            $exception = new Entity_Validation_Exception($object_name, $array);
+            $exception = new ORM_Entity_Validation_Exception($object_name, $array);
             throw $exception;
         }
 

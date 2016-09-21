@@ -88,4 +88,4 @@ class Kohana_ORM_Entity_Validation_Exception extends Kohana_Exception
 
 }
 
-// End Kohana_Entity_Validation_Exception
+// End Kohana_ORM_Entity_Validation_Exception
