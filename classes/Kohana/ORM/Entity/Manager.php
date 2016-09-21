@@ -149,7 +149,7 @@ class Kohana_ORM_Entity_Manager
     {
         if ($object->state() === Entity::NOT_EXISTS_STATE)
         {
-            throw new Entity_Exception('Entity not exists: :var', array(':var' => $object));
+            throw new ORM_Entity_Exception('Entity not exists: :var', array(':var' => $object));
         }
         $table = $object->table_name();
         $state = $object->state();
