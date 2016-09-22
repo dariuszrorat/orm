@@ -209,7 +209,8 @@ class Kohana_ORM_Entity_Manager
     public function check($object)
     {
         $data = $object->data();
-        if (empty($data))
+        $rules = $object->rules();
+        if (empty($data) || empty($rules))
         {
             return $this;
         }
