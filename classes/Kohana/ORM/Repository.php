@@ -25,12 +25,19 @@ class Kohana_ORM_Repository
     protected $_db_pending = array();
 
     /**
-     * Creates and returns a new repository.
+     * Creates and returns a new repository or entity.
      * @return ORM_Repository
      */
-    public static function factory($name)
+    public static function factory($name, $id = NULL)
     {
-        return new ORM_Repository($name);
+        $repository = new ORM_Repository($name);
+        if ($id !== NULL)
+        {
+            $repository->where('id', '=', $id);
+            $entity = $repository->find();
+            return $entity;
+        }
+        return $repository;
     }
 
 

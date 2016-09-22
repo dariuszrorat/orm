@@ -103,6 +103,13 @@ Get filtered data:
 
 ```
 
+Simple get employee by id:
+
+```php
+        $id = 1;
+        $result = ORM_Repository::factory('Employee', $id);
+```
+
 #### Update Employee
 
 Update one record:
