@@ -160,6 +160,7 @@ class Kohana_ORM_Entity_Manager
             case Entity::CREATED_STATE:
                 {
                     $this->check($object);
+                    $this->filter($object);
                     $vars = $object->data();
                     $result = DB::insert($table, array_keys($vars))
                             ->values($vars)
@@ -171,6 +172,7 @@ class Kohana_ORM_Entity_Manager
             case Entity::UPDATED_STATE:
                 {
                     $this->check($object);
+                    $this->filter($object);
                     $id = $object->id;
                     $vars = $object->data();
                     $result = DB::update($table)
@@ -224,6 +226,81 @@ class Kohana_ORM_Entity_Manager
         }
 
         return $this;
+    }
+
+    /**
+     * Filters the entity
+     *
+     * @param  object
+     * @return this
+     */
+
+    public function filter($object)
+    {
+        $filters = $object->filters();
+        if (empty($filters))
+        {
+            return;
+        }
+        $data = $object->data();
+        foreach ($data as $key => $value)
+        {
+            $object->set($key, $this->_run_filter($key, $value, $filters));
+        }
+        return $this;
+    }
+
+    /**
+     * Filters a value for a specific column
+     *
+     * @param  string $field  The column name
+     * @param  string $value  The value to filter
+     * @return string
+     */
+    protected function _run_filter($field, $value, $filters)
+    {
+
+	$wildcards = empty($filters[TRUE]) ? array() : $filters[TRUE];
+	$filters = empty($filters[$field]) ? $wildcards : array_merge($wildcards, $filters[$field]);
+
+	$_bound = array
+	(
+	    ':field' => $field,
+	);
+
+	foreach ($filters as $array)
+	{
+		$_bound[':value'] = $value;
+
+		$filter = $array[0];
+		$params = Arr::get($array, 1, array(':value'));
+
+		foreach ($params as $key => $param)
+		{
+			if (is_string($param) AND array_key_exists($param, $_bound))
+			{
+				$params[$key] = $_bound[$param];
+			}
+		}
+
+		if (is_array($filter) OR ! is_string($filter))
+		{
+			$value = call_user_func_array($filter, $params);
+		}
+		elseif (strpos($filter, '::') === FALSE)
+		{
+			$function = new ReflectionFunction($filter);
+			$value = $function->invokeArgs($params);
+		}
+		else
+		{
+			list($class, $method) = explode('::', $filter, 2);
+			$method = new ReflectionMethod($class, $method);
+			$value = $method->invokeArgs(NULL, $params);
+		}
+	}
+
+	return $value;
     }
 
 }

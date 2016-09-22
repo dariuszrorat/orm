@@ -502,6 +502,10 @@ class Kohana_ORM_Repository
                     ->as_object('Entity_' . $this->_name)
                     ->execute()
                     ->as_array();
+            foreach ($results as $obj)
+            {
+                $obj->state(Entity::LOADED_STATE);
+            }
 
             return $results;
         } else
@@ -518,6 +522,10 @@ class Kohana_ORM_Repository
             {
                 $result = Entity::factory($this->_name);
                 return $result;
+            }
+            else
+            {
+                $result->state(Entity::LOADED_STATE);
             }
             return $result;
         }

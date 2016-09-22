@@ -124,4 +124,14 @@ abstract class Kohana_Entity
         return array();
     }
 
+    /**
+     * Filter definitions for validation
+     *
+     * @return array
+     */
+    public function filters()
+    {
+        return array();
+    }
+
 }

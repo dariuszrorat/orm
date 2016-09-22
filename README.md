@@ -33,6 +33,18 @@ class Entity_Employee extends Entity
         );
     }
 
+    public function filters()
+    {
+        return array(
+            'firstname' => array(
+              array('ucfirst')
+            ),
+            'lastname' => array(
+              array('ucfirst')
+            )
+	);
+    }
+
 }
 ```
 
