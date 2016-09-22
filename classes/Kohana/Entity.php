@@ -127,10 +127,8 @@ abstract class Kohana_Entity
 
         if ($value === Entity::LOADED_STATE)
         {
-            foreach ($this->_changed as $key => $val)
-            {
-                $this->_changed[$key] = FALSE;
-            }
+            $keys = array_keys($this->_changed);
+            $this->_changed = array_fill_keys($keys, FALSE);
         }
 
         return $this;
