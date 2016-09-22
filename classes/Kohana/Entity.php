@@ -26,6 +26,7 @@ abstract class Kohana_Entity
      */
     protected $_table_name;
     protected $_data = array();
+    protected $_changed = array();
     protected $_state = Entity::NOT_EXISTS_STATE;
 
     /**
@@ -88,6 +89,7 @@ abstract class Kohana_Entity
     public function set($key, $value)
     {
         $this->_data[$key] = $value;
+        $this->_changed[$key] = TRUE;
         $this->_state = array_key_exists('id', $this->_data) ? Entity::UPDATED_STATE : Entity::CREATED_STATE;
         return $this;
     }
@@ -103,6 +105,17 @@ abstract class Kohana_Entity
         }
     }
 
+    public function changed($key = NULL)
+    {
+        if ($key !== NULL)
+        {
+            return array_key_exists($key, $this->_changed) ? $this->_changed[$key] : NULL;
+        } else
+        {
+            return $this->_changed;
+        }
+    }
+
     public function state($value = NULL)
     {
         if ($value === NULL)
@@ -111,6 +124,15 @@ abstract class Kohana_Entity
         }
 
         $this->_state = $value;
+
+        if ($value === Entity::LOADED_STATE)
+        {
+            foreach ($this->_changed as $key => $val)
+            {
+                $this->_changed[$key] = FALSE;
+            }
+        }
+
         return $this;
     }
 

@@ -243,9 +243,13 @@ class Kohana_ORM_Entity_Manager
             return;
         }
         $data = $object->data();
+        $changed = $object->changed();
         foreach ($data as $key => $value)
         {
-            $object->set($key, $this->_run_filter($key, $value, $filters));
+            if ($changed[$key] === TRUE)
+            {
+                $object->set($key, $this->_run_filter($key, $value, $filters));
+            }
         }
         return $this;
     }
