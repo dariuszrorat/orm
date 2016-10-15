@@ -1,6 +1,8 @@
 # Kohana ORM module
 
 This module using Data Mapper pattern to work with CRUD operations.
+This module also includes standard models Kohana ORM extended with permissions
+for roles and users.
 
 ## Examples
 
@@ -185,5 +187,59 @@ Delete all records:
         ORM_Entity_Manager::factory()
             ->persist($entities)
             ->flush();
+
+```
+
+## Using standard Kohana ORM
+
+Creating users with permissions
+
+```php
+    public function action_create()
+    {
+        $post = array(
+            'username' => 'your_name',
+            'password' => 'your_password',
+            'password_confirm' => 'your_password',
+            'email' => 'yourname@domain.com',
+        );
+
+        $user = ORM::factory('User')->create_user($post, array(
+                    'username',
+                    'password',
+                    'email'
+        ));
+
+        $user->add('roles', ORM::factory('Role', array('name' => 'login')));
+        // user can only read any data
+        $user->add('permissions', ORM::factory('Permission', array('name' => 'read')));
+
+        // admin role can do anything
+        $role = ORM::factory('Role', array('name' => 'admin'));
+        $role->add('permissions', ORM::factory('Permission', array('name' => 'create')));
+        $role->add('permissions', ORM::factory('Permission', array('name' => 'read')));
+        $role->add('permissions', ORM::factory('Permission', array('name' => 'update')));
+        $role->add('permissions', ORM::factory('Permission', array('name' => 'delete')));
+
+    }
+```
+
+Check use permissions (without considering the role permissions)
+
+```php
+
+    public function action_check()
+    {
+        $user = ORM::factory('User', 1);
+
+        $read_permission = ORM::factory('Permission', array('name' => 'read'));
+        $result_read = $user->has('permissions', $read_permission);
+
+        $create_permission = ORM::factory('Permission', array('name' => 'create'));
+        $result_create = $user->has('permissions', $create_permission);
+
+        echo Debug::vars($result_read, $result_create);
+    }
+
 
 ```
