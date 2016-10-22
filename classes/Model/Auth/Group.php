@@ -1,19 +1,18 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
- * Default auth permission
+ * Default auth group
  *
  * @package    Kohana/Auth
- * @author     Dariusz Rorat
+ * @author     Kohana Team
  * @copyright  (c) 2016 Dariusz Rorat
  * @license    BSD
  */
-class Model_Auth_Permission extends ORM {
+class Model_Auth_Group extends ORM {
 
 	// Relationships
 	protected $_has_many = array(
-		'users'  => array('model' => 'User', 'through' => 'permissions_users'),
-                'groups' => array('model' => 'Group','through' => 'permissions_groups'),
-                'roles'  => array('model' => 'Role', 'through' => 'permissions_roles'),
+		'users' => array('model' => 'User','through' => 'groups_users'),
+		'permissions' => array('model' => 'Permission','through' => 'permissions_groups'),
 	);
 
 	public function rules()
@@ -30,4 +29,4 @@ class Model_Auth_Permission extends ORM {
 		);
 	}
 
-} // End Auth Permission Model
+} // End Auth Group Model

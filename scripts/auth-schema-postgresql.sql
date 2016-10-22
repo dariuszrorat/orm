@@ -13,6 +13,21 @@ CREATE TABLE roles_users
   role_id integer
 );
 
+CREATE TABLE groups
+(
+  id serial,
+  "name" varchar(32) NOT NULL,
+  description text NOT NULL,
+  CONSTRAINT groups_id_pkey PRIMARY KEY (id),
+  CONSTRAINT groups_name_key UNIQUE (name)
+);
+
+CREATE TABLE groups_users
+(
+  user_id integer,
+  group_id integer
+);
+
 CREATE TABLE permissions
 (
   id serial,
@@ -25,6 +40,12 @@ CREATE TABLE permissions
 CREATE TABLE permissions_roles
 (
   role_id integer,
+  permission_id integer
+);
+
+CREATE TABLE permissions_groups
+(
+  group_id integer,
   permission_id integer
 );
 
@@ -67,6 +88,13 @@ ALTER TABLE roles_users
   ADD CONSTRAINT roles_users_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   ADD CONSTRAINT roles_users_role_id_fkey FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE;
 
+CREATE INDEX groups_users_user_id_idx ON groups_users (user_id);
+CREATE INDEX groups_users_group_id_idx ON groups_users (group_id);
+
+ALTER TABLE groups_users
+  ADD CONSTRAINT groups_users_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  ADD CONSTRAINT groups_users_group_id_fkey FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE;
+
 CREATE INDEX permissions_users_user_id_idx ON permissions_users (user_id);
 CREATE INDEX permissions_users_permission_id_idx ON permissions_users (permission_id);
 
@@ -80,6 +108,13 @@ CREATE INDEX permissions_roles_permission_id_idx ON permissions_roles (permissio
 ALTER TABLE permissions_roles
   ADD CONSTRAINT permissions_roles_role_id_fkey FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
   ADD CONSTRAINT permissions_roles_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE;
+
+CREATE INDEX permissions_groups_group_id_idx ON permissions_groups (group_id);
+CREATE INDEX permissions_groups_permission_id_idx ON permissions_groups (permission_id);
+
+ALTER TABLE permissions_groups
+  ADD CONSTRAINT permissions_groups_group_id_fkey FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
+  ADD CONSTRAINT permissions_groups_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE;
 
 ALTER TABLE user_tokens
   ADD CONSTRAINT user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
